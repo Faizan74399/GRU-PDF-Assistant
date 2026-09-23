@@ -12,31 +12,33 @@ GRU PDF Assistant is an AI-powered research assistant that allows users to ask q
 
 The application processes PDF content, creates embeddings, performs semantic search to retrieve relevant information, and uses a Large Language Model to generate answers based on the retrieved context.
 
+## 📸 Application Preview
+
+![GRU PDF Assistant](screenshots/gru-pdf-assistant.png)
+
+ ## 🚀 Features
 
 
-\## 🚀 Features
 
+- 📄 PDF document processing
 
+- 🔎 Semantic search
 
-\- 📄 PDF document processing
+- 🧠 Retrieval-Augmented Generation (RAG)
 
-\- 🔎 Semantic search
+- 🤖 LLM-powered responses
 
-\- 🧠 Retrieval-Augmented Generation (RAG)
+- 🧩 Text chunking and embeddings
 
-\- 🤖 LLM-powered responses
+- 🗂️ Vector storage using ChromaDB
 
-\- 🧩 Text chunking and embeddings
+- 💬 Context-aware question answering
 
-\- 🗂️ Vector storage using ChromaDB
+- 🌐 React-based frontend
 
-\- 💬 Context-aware question answering
+- 🔌 API integration
 
-\- 🌐 React-based frontend
-
-\- 🔌 API integration
-
-\- 💡 Suggested questions and AI-generated responses
+- 💡 Suggested questions and AI-generated responses
 
 
 
