@@ -1,17 +1,19 @@
 import os
 import uuid
+import re
+import hashlib
+import math
 
 from dotenv import load_dotenv
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
 from pydantic import BaseModel
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.embeddings import Embeddings
 from langchain_groq import ChatGroq
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
 load_dotenv()
@@ -19,21 +21,60 @@ load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 
 if not groq_api_key:
-    raise ValueError("GROQ_API_KEY is missing from .env file")
+    raise ValueError("GROQ_API_KEY is missing")
 
 app = FastAPI()
 
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        frontend_url
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
 
-embedding_model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
+
+class LightweightEmbeddings(Embeddings):
+    def __init__(self, dimensions=512):
+        self.dimensions = dimensions
+
+    def _embed(self, text):
+        vector = [0.0] * self.dimensions
+        words = re.findall(r"\w+", text.lower())
+
+        for word in words:
+            digest = hashlib.sha256(word.encode()).digest()
+            index = int.from_bytes(digest[:4], "big") % self.dimensions
+            vector[index] += 1.0
+
+        magnitude = math.sqrt(
+            sum(value * value for value in vector)
+        )
+
+        if magnitude > 0:
+            vector = [
+                value / magnitude
+                for value in vector
+            ]
+
+        return vector
+
+    def embed_documents(self, texts):
+        return [
+            self._embed(text)
+            for text in texts
+        ]
+
+    def embed_query(self, text):
+        return self._embed(text)
+
+
+embedding_model = LightweightEmbeddings()
 
 llm = ChatGroq(
     model="openai/gpt-oss-20b",
@@ -42,7 +83,10 @@ llm = ChatGroq(
 
 UPLOAD_DIR = "uploads"
 
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(
+    UPLOAD_DIR,
+    exist_ok=True
+)
 
 
 class Question(BaseModel):
@@ -58,7 +102,9 @@ def home():
 
 
 @app.post("/upload")
-async def upload_pdf(file: UploadFile = File(...)):
+async def upload_pdf(
+    file: UploadFile = File(...)
+):
     if not file.filename:
         raise HTTPException(
             status_code=400,
@@ -72,7 +118,6 @@ async def upload_pdf(file: UploadFile = File(...)):
         )
 
     document_id = uuid.uuid4().hex
-
     original_filename = file.filename
 
     file_path = os.path.join(
@@ -212,14 +257,19 @@ Question:
 
         if isinstance(answer, list):
             answer = "".join(
-                block.get("text", "") if isinstance(block, dict) else str(block)
+                block.get("text", "")
+                if isinstance(block, dict)
+                else str(block)
                 for block in answer
             )
 
         sources = []
 
         for doc in retrieved_docs:
-            page = doc.metadata.get("page", 0) + 1
+            page = doc.metadata.get(
+                "page",
+                0
+            ) + 1
 
             filename = doc.metadata.get(
                 "filename",
