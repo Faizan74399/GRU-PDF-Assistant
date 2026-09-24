@@ -11,19 +11,15 @@ body {
 }
 
 button,
-textarea {
+textarea,
+input {
   font-family: inherit;
 }
 
 .app {
   min-height: 100vh;
   background: #f4f5f7;
-  position: relative;
   overflow: hidden;
-}
-
-.background-glow {
-  display: none;
 }
 
 .header {
@@ -91,13 +87,13 @@ textarea {
   width: 100%;
   max-width: 1050px;
   margin: auto;
-  padding: 78px 25px 45px;
+  padding: 70px 25px 45px;
 }
 
 .hero {
   text-align: center;
   max-width: 780px;
-  margin: 0 auto 52px;
+  margin: 0 auto 45px;
 }
 
 .badge {
@@ -114,7 +110,7 @@ textarea {
 }
 
 .hero h2 {
-  font-size: clamp(42px, 6vw, 70px);
+  font-size: clamp(42px, 6vw, 68px);
   line-height: 1.03;
   letter-spacing: -3px;
   font-weight: 750;
@@ -126,19 +122,24 @@ textarea {
 }
 
 .hero-text {
-  max-width: 600px;
-  margin: 24px auto 0;
+  max-width: 630px;
+  margin: 23px auto 0;
   color: #6f7580;
   font-size: 16px;
   line-height: 1.7;
 }
 
+.upload-card,
 .chat-card {
   background: #ffffff;
   border: 1px solid #e1e4e8;
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 8px 30px rgba(25, 28, 35, 0.06);
+}
+
+.upload-card {
+  margin-bottom: 20px;
 }
 
 .card-top {
@@ -175,6 +176,125 @@ textarea {
   background: #f5f5f6;
 }
 
+.upload-area {
+  padding: 38px 20px;
+  text-align: center;
+  border: 1.5px dashed #d3d6dc;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eeeaff;
+  color: #6544e9;
+  border-radius: 12px;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.upload-area h4 {
+  color: #25262b;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.upload-area p {
+  margin-top: 6px;
+  color: #898e97;
+  font-size: 12px;
+}
+
+.file-btn {
+  display: inline-block;
+  margin-top: 19px;
+  padding: 10px 17px;
+  border: 1px solid #dfe2e6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #555b65;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.file-btn:hover {
+  border-color: #b9adff;
+  color: #6241e8;
+}
+
+.file-btn input {
+  display: none;
+}
+
+.upload-btn {
+  display: block;
+  margin: 12px auto 0;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #6d4aff;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.upload-btn:hover:not(:disabled) {
+  background: #5837df;
+}
+
+.upload-btn:disabled {
+  background: #bcb4dc;
+  cursor: not-allowed;
+}
+
+.file-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid #dcd7ff;
+  border-radius: 10px;
+  background: #faf9ff;
+}
+
+.file-info strong {
+  color: #6042dc;
+  font-size: 13px;
+}
+
+.file-info p {
+  margin-top: 4px;
+  color: #747985;
+  font-size: 12px;
+}
+
+.file-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.file-stats span {
+  padding: 7px 10px;
+  border: 1px solid #e1def3;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #666b75;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chat-card {
+  margin-bottom: 20px;
+}
+
 .input-wrapper {
   position: relative;
 }
@@ -191,7 +311,6 @@ textarea {
   color: #191a1f;
   font-size: 14px;
   line-height: 1.6;
-  transition: border 0.2s ease, background 0.2s ease;
 }
 
 .input-wrapper textarea:focus {
@@ -215,12 +334,10 @@ textarea {
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.2s ease;
 }
 
 .ask-btn:hover:not(:disabled) {
   background: #5837df;
-  transform: translateY(-1px);
 }
 
 .ask-btn:disabled {
@@ -239,7 +356,6 @@ textarea {
 .suggestions span {
   color: #8a9099;
   font-size: 12px;
-  margin-right: 3px;
 }
 
 .suggestions button {
@@ -250,7 +366,6 @@ textarea {
   color: #555b65;
   font-size: 12px;
   cursor: pointer;
-  transition: 0.2s ease;
 }
 
 .suggestions button:hover {
@@ -323,7 +438,8 @@ textarea {
   overflow: hidden;
 }
 
-.answer-header {
+.answer-header,
+.sources-header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -344,14 +460,16 @@ textarea {
   font-size: 16px;
 }
 
-.answer-header span {
+.answer-header span,
+.sources-header span {
   color: #7663d8;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 1.2px;
 }
 
-.answer-header h4 {
+.answer-header h4,
+.sources-header h4 {
   margin-top: 2px;
   color: #22232a;
   font-size: 15px;
@@ -365,11 +483,77 @@ textarea {
   white-space: pre-wrap;
 }
 
+.sources-box {
+  margin-top: 20px;
+  border: 1px solid #e1e4e8;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.sources-header {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sources-list {
+  padding: 10px;
+}
+
+.source-item {
+  border: 1px solid #e4e6ea;
+  border-radius: 9px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.source-item:last-child {
+  margin-bottom: 0;
+}
+
+.source-item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 15px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.source-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-item summary div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.source-item summary strong {
+  color: #303139;
+  font-size: 12px;
+}
+
+.source-item summary span {
+  color: #6d4aff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.source-content {
+  padding: 15px;
+  border-top: 1px solid #e4e6ea;
+  background: #ffffff;
+  color: #666b75;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-  margin-top: 22px;
 }
 
 .feature {
@@ -426,11 +610,7 @@ footer {
   }
 
   .main-content {
-    padding-top: 55px;
-  }
-
-  .hero h2 {
-    letter-spacing: -2px;
+    padding-top: 50px;
   }
 
   .features {
@@ -458,11 +638,7 @@ footer {
   }
 
   .main-content {
-    padding: 45px 15px 30px;
-  }
-
-  .hero {
-    margin-bottom: 35px;
+    padding: 40px 15px 30px;
   }
 
   .hero h2 {
@@ -473,6 +649,7 @@ footer {
     font-size: 14px;
   }
 
+  .upload-card,
   .chat-card {
     padding: 20px;
     border-radius: 12px;
@@ -480,6 +657,16 @@ footer {
 
   .card-top {
     align-items: flex-start;
+  }
+
+  .upload-area {
+    padding: 30px 15px;
+  }
+
+  .file-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .input-wrapper textarea {
@@ -495,5 +682,11 @@ footer {
 
   .suggestions {
     align-items: flex-start;
+  }
+
+  .source-item summary div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
