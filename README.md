@@ -19,8 +19,7 @@ The application processes PDF content, creates embeddings, performs semantic sea
 
 ## 🎥 Demo
 
-[▶️ Watch GRU PDF Assistant Demo](gru-pdf-assistant-demo.mp4)
-
+[▶️ Watch GRU PDF Assistant Demo](https://youtu.be/sBn102XjeoE)
  ## 🚀 Features
 
 
