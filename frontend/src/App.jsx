@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./App.css";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8001";
+
 function App() {
   const [file, setFile] = useState(null);
   const [documentId, setDocumentId] = useState("");
@@ -11,23 +13,31 @@ function App() {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [uploadMessage, setUploadMessage] = useState("");
 
   const uploadPDF = async () => {
     if (!file) return;
 
     setUploading(true);
+    setUploadMessage("Connecting to AI server...");
     setError("");
     setAnswer("");
-    setSources("");
+    setSources([]);
     setDocumentId("");
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 90000);
 
     try {
       const formData = new FormData();
       formData.append("file", file);
 
-     const response = await fetch(`${API_URL}/upload`, {
+      const response = await fetch(`${API_URL}/upload`, {
         method: "POST",
-        body: formData
+        body: formData,
+        signal: controller.signal
       });
 
       if (!response.ok) {
@@ -43,10 +53,18 @@ function App() {
         pages: data.pages,
         chunks: data.chunks
       });
+
+      setUploadMessage("");
     } catch (err) {
-      setError("Unable to upload and process the PDF.");
+      if (err.name === "AbortError") {
+        setError("The AI server took too long to respond. Please try again.");
+      } else {
+        setError("Unable to upload and process the PDF.");
+      }
     } finally {
+      clearTimeout(timeout);
       setUploading(false);
+      setUploadMessage("");
     }
   };
 
@@ -108,6 +126,7 @@ function App() {
     setAnswer("");
     setSources([]);
     setError("");
+    setUploadMessage("");
   };
 
   return (
@@ -175,6 +194,7 @@ function App() {
 
             <label className="file-btn">
               Choose PDF
+
               <input
                 type="file"
                 accept=".pdf,application/pdf"
@@ -185,18 +205,27 @@ function App() {
                   setAnswer("");
                   setSources([]);
                   setError("");
+                  setUploadMessage("");
                 }}
               />
             </label>
 
             {file && !fileInfo && (
-              <button
-                className="upload-btn"
-                onClick={uploadPDF}
-                disabled={uploading}
-              >
-                {uploading ? "Processing PDF..." : "Upload & Process →"}
-              </button>
+              <>
+                <button
+                  className="upload-btn"
+                  onClick={uploadPDF}
+                  disabled={uploading}
+                >
+                  {uploading
+                    ? "Processing PDF..."
+                    : "Upload & Process →"}
+                </button>
+
+                {uploading && uploadMessage && (
+                  <p>{uploadMessage}</p>
+                )}
+              </>
             )}
           </div>
 
@@ -214,12 +243,14 @@ function App() {
             </div>
           )}
         </section>
-         {error && !documentId && (
-         <div className="error-box">
-          <strong>Upload failed</strong>
-         <p>{error}</p>
-           </div>
-           )}
+
+        {error && !documentId && (
+          <div className="error-box">
+            <strong>Upload failed</strong>
+            <p>{error}</p>
+          </div>
+        )}
+
         {documentId && (
           <section className="chat-card">
             <div className="card-top">
@@ -261,7 +292,9 @@ function App() {
               </button>
 
               <button
-                onClick={() => askQuestion("What are the main topics discussed?")}
+                onClick={() =>
+                  askQuestion("What are the main topics discussed?")
+                }
               >
                 Main topics?
               </button>
@@ -321,7 +354,10 @@ function App() {
 
                     <div className="sources-list">
                       {sources.map((source, index) => (
-                        <details key={index} className="source-item">
+                        <details
+                          key={index}
+                          className="source-item"
+                        >
                           <summary>
                             <div>
                               <strong>{source.filename}</strong>
@@ -376,7 +412,7 @@ function App() {
 
       <footer>
         <span>DocMind AI</span>
-        <span>Built with React + FastAPI + LangChain + RAG</span>
+        <span>Built with React + FastAPI + RAG</span>
       </footer>
     </div>
   );
