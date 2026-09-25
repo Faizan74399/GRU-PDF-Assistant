@@ -214,7 +214,12 @@ function App() {
             </div>
           )}
         </section>
-
+         {error && !documentId && (
+         <div className="error-box">
+          <strong>Upload failed</strong>
+         <p>{error}</p>
+           </div>
+           )}
         {documentId && (
           <section className="chat-card">
             <div className="card-top">
