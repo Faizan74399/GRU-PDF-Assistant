@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8001";
 function App() {
   const [file, setFile] = useState(null);
   const [documentId, setDocumentId] = useState("");
@@ -25,7 +25,7 @@ function App() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://127.0.0.1:8001/upload", {
+     const response = await fetch(`${API_URL}/upload`, {
         method: "POST",
         body: formData
       });
@@ -60,7 +60,7 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8001/ask", {
+      const response = await fetch(`${API_URL}/ask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
